@@ -5,6 +5,7 @@
 #include "Factory.h"
 
 
+
 /*
 	The gamestate represents a discrete container of all that is 
 	necessary to drive the game experience.
@@ -25,10 +26,10 @@ class GameState : public BaseState
 public:
 	virtual void init()
 	{
-		spr_bullet = sfw::loadTextureMap("../res/bullet.png");
-		spr_space = sfw::loadTextureMap("../res/space.jpg");
-		spr_ship = sfw::loadTextureMap("../res/ship.png");
-		spr_roid = sfw::loadTextureMap("../res/rock.png");
+		spr_bullet = sfw::loadTextureMap("../res/garlic.png");
+		spr_space = sfw::loadTextureMap("../res/park.jpg");
+		spr_ship = sfw::loadTextureMap("../res/bman.gif");
+		spr_roid = sfw::loadTextureMap("../res/boid.png");
 		spr_font = sfw::loadTextureMap("../res/font.png",32,4);
 	}
 
@@ -45,6 +46,62 @@ public:
 		factory.spawnStaticImage(spr_space, 0, 0, 800, 600);
 
 		factory.spawnPlayer(spr_ship, spr_font);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
+		factory.spawnAsteroid(spr_roid);
 		factory.spawnAsteroid(spr_roid);
 		factory.spawnAsteroid(spr_roid);
 		factory.spawnAsteroid(spr_roid);
@@ -95,6 +152,16 @@ public:
 					del = true;
 			}
 
+
+			if (e.gravwell && e.transform)
+			{
+				for (auto bit = factory.begin(); bit != factory.end(); bit++)
+					if(it != bit && bit->rigidbody && bit->transform && !bit->controller)
+					{
+						e.gravwell->attract(&e.transform, &bit->transform, &bit->rigidbody);
+					}
+			}
+
 			// ++ here, because free increments in case of deletions
 			if (!del) it++;
 			else
@@ -104,9 +171,6 @@ public:
 			}
 		}
 
-
-		// Physics system!
-		// You'll want to extend this with custom collision responses
 
 		
 		for(auto it = factory.begin(); it != factory.end(); it++) // for each entity
@@ -122,14 +186,24 @@ public:
 						
 						// if there was a collision,
 						if (cd.result())
-						{
+						{							
 							// condition for dynamic resolution
-							if (it->rigidbody && bit->rigidbody)
+							/*else*/ if (it->rigidbody && bit->rigidbody && !bit->controller && !it->controller)
 								base::DynamicResolution(cd,&it->transform,&it->rigidbody, &bit->transform, &bit->rigidbody);
 							
+							//else if (bit->rigidbody && it->rigidbody && !it->controller)
+							//	base::DynamicResolution(cd, &bit->transform, &bit->rigidbody, &it->transform, &it->rigidbody);
+
+
+							else if (it->rigidbody && bit->controller)
+								base::StaticResolution(cd, &it->transform, &it->rigidbody);
+							else if (it->controller && bit->rigidbody)
+								base::StaticResolution(cd, &bit->transform, &bit->rigidbody);
 							// condition for static resolution
 							else if (it->rigidbody && !bit->rigidbody)							
-								base::StaticResolution(cd, &it->transform, &it->rigidbody);					
+								base::StaticResolution(cd, &it->transform, &it->rigidbody);			
+
+							
 						}
 					}
 				}
@@ -153,18 +227,18 @@ public:
 				e.text->draw(&e.transform, cam);
 
 
-#ifdef _DEBUG
-		for each(auto &e in factory)
-			if (e.transform)
-				e.transform->draw(cam);
-
-		for each(auto &e in factory)
-			if (e.transform && e.collider)
-				e.collider->draw(&e.transform, cam);
-
-		for each(auto &e in factory)
-			if (e.transform && e.rigidbody)
-				e.rigidbody->draw(&e.transform, cam);
-#endif
+//#ifdef _DEBUG
+//		for each(auto &e in factory)
+//			if (e.transform)
+//				e.transform->draw(cam);
+//
+//		for each(auto &e in factory)
+//			if (e.transform && e.collider)
+//				e.collider->draw(&e.transform, cam);
+//
+//		for each(auto &e in factory)
+//			if (e.transform && e.rigidbody)
+//				e.rigidbody->draw(&e.transform, cam);
+//#endif
 	}
 };

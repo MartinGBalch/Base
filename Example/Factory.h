@@ -15,6 +15,7 @@ class Factory
 	ObjectPool<Camera>    cameras;
 	ObjectPool<Text>	  texts;
 	ObjectPool<PlayerController> controllers;
+	ObjectPool<GravityWell> gravwells;
 
 public:
 
@@ -26,7 +27,7 @@ public:
 	Factory(size_t size = 512)
 								: entities(size), transforms(size), rigidbodies(size),
 								  colliders(size), sprites(size), lifetimes(size),
-								  cameras(size), controllers(size), texts(size)
+								  cameras(size), controllers(size), texts(size), gravwells(size)
 	{
 	}
 
@@ -49,20 +50,23 @@ public:
 		e->transform = transforms.push();
 		e->sprite = sprites.push();
 		e->sprite->sprite_id = sprite;
-		e->sprite->dimensions = vec2{w,h};
-		e->transform->setLocalPosition(vec2{ x,y });	
+		e->sprite->dimensions = vec2{1920,1080};
+		e->transform->setLocalPosition(vec2{ 560,225 });	
 		return e;
 	}
 
 	ObjectPool<Entity>::iterator spawnBullet(unsigned sprite, vec2 pos, vec2 dim, float ang, float impulse, unsigned faction)
 	{
+		
 		auto e = entities.push();
 
 		e->transform = transforms.push();
 		e->rigidbody = rigidbodies.push();
 		e->sprite = sprites.push();
 		e->lifetime = lifetimes.push();
-		e->collider = colliders.push();
+		//e->collider = colliders.push();
+		e->gravwell = gravwells.push();
+		
 
 		e->transform->setLocalPosition(pos);
 		e->transform->setLocalScale(dim);
@@ -73,7 +77,9 @@ public:
 
 		e->rigidbody->addImpulse(e->transform->getGlobalUp() * impulse);
 
-		e->lifetime->lifespan = 1.6f;
+		e->lifetime->lifespan = 5.f;
+
+		
 		
 		return e;
 	}
@@ -92,9 +98,11 @@ public:
 		e->text->sprite_id = font;
 		e->text->offset = vec2{ -24,-24 };
 		e->text->off_scale = vec2{.5f,.5f};
-		e->text->setString("Player1");
+		//e->text->setString("Player1");
 
-		e->transform->setLocalScale(vec2{48,48});
+		e->transform->setLocalScale(vec2{130,140});
+
+		e->transform->setGlobalPosition(vec2{ 540, -264 });
 
 		e->sprite->sprite_id = sprite;
 
@@ -113,9 +121,11 @@ public:
 
 		e->transform->setLocalScale(vec2{ 48,48 });
 
-		e->transform->setGlobalPosition(vec2::fromAngle(randRange(0, 360)*DEG2RAD)*(rand01() * 200 + 64));
+		e->transform->setGlobalPosition(vec2{randRange(500, 2000), 500});
 
-		e->rigidbody->addSpin(rand01()*12-6);
+
+
+		/*e->rigidbody->addSpin(rand01()*12-6);*/
 
 		e->sprite->sprite_id = sprite;
 

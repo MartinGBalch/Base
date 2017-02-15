@@ -10,8 +10,10 @@
 */
 void main()
 {
-	sfw::initContext();
+	float SCREEN_WIDTH =1900, SCREEN_HEIGHT = 1000;
+	sfw::initContext(SCREEN_WIDTH, SCREEN_HEIGHT);
 
+	
 
 	GameState gs;
 
