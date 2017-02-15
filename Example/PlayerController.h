@@ -2,15 +2,16 @@
 
 #include "Base.h"
 
-
+float shotTimer = 0.0f;
+bool shotRequest = false;
 class PlayerController
 {
 
 public:
 	float turnSpeed = .3f, stopPower = 10;
-	float shotTimer = 0.0f;
-	
 	bool shotRequest = false;
+	
+	
 
 	void poll(base::Transform *T, base::Rigidbody *rb, float dt)
 	{
