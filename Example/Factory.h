@@ -122,7 +122,7 @@ public:
 		e->transform->setLocalScale(vec2{ 48,48 });
 		e->rigidbody->drag = 1;
 
-		e->transform->setGlobalPosition(vec2{randRange(500, 2000), 500});
+		e->transform->setGlobalPosition(vec2{randRange(2000, 2000), 500});
 
 
 
