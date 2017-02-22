@@ -1,6 +1,8 @@
 #pragma once
-
+#include <iostream>
 #include "Base.h"
+
+using namespace std;
 
 float shotTimer = 0.0f;
 bool shotRequest = false;
@@ -10,6 +12,7 @@ class PlayerController
 public:
 	float turnSpeed = .3f, stopPower = 10;
 	bool shotRequest = false;
+	int hp = 6;
 	
 	
 
@@ -18,15 +21,21 @@ public:
 		
 
 		if (sfw::getKey('A'))
+		{
 			rb->addTorque(turnSpeed);
+			rb->drag += .5f;
+		}
 
-		if (sfw::getKey('D'))
-			rb->addTorque(-turnSpeed);
+			if (sfw::getKey('D'))
+			{
+				rb->addTorque(-turnSpeed);
+				rb->drag += .5f;
+			}
 		if (sfw::getKey(' '))
 			rb->addTorque(rb->angularVelocity * -stopPower);
 
 		
-		
+	
 			
 
 		shotTimer -= dt;

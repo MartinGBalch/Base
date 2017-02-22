@@ -16,6 +16,7 @@ class Factory
 	ObjectPool<Text>	  texts;
 	ObjectPool<PlayerController> controllers;
 	ObjectPool<GravityWell> gravwells;
+	ObjectPool<Target> target;
 
 public:
 
@@ -25,9 +26,9 @@ public:
 
 	// for now, they're all the same size
 	Factory(size_t size = 512)
-								: entities(size), transforms(size), rigidbodies(size),
-								  colliders(size), sprites(size), lifetimes(size),
-								  cameras(size), controllers(size), texts(size), gravwells(size)
+		: entities(size), transforms(size), rigidbodies(size),
+		colliders(size), sprites(size), lifetimes(size),
+		cameras(size), controllers(size), texts(size), gravwells(size), target(size)
 	{
 	}
 
@@ -94,6 +95,7 @@ public:
 		e->collider = colliders.push();
 		e->controller = controllers.push();
 		e->text = texts.push();
+		e->rigidbody->drag = 1;
 
 		e->text->sprite_id = font;
 		e->text->offset = vec2{ -24,-24 };
@@ -118,12 +120,36 @@ public:
 		e->rigidbody = rigidbodies.push();
 		e->sprite = sprites.push();
 		e->collider = colliders.push();
+		
 
 		e->transform->setLocalScale(vec2{ 48,48 });
 		e->rigidbody->drag = 1;
 
-		e->transform->setGlobalPosition(vec2{randRange(2000, 2000), 500});
+		e->transform->setGlobalPosition(vec2{randRange(2000, 2000), -500});
 
+
+
+		/*e->rigidbody->addSpin(rand01()*12-6);*/
+
+		e->sprite->sprite_id = sprite;
+
+		return e;
+	}
+
+	ObjectPool<Entity>::iterator spawnTarget(unsigned sprite, float x, float y)
+	{
+		auto e = entities.push();
+
+		e->transform = transforms.push();
+		/*e->rigidbody = rigidbodies.push();*/
+		e->sprite = sprites.push();
+		e->collider = colliders.push(Collider(.5f));
+		e->target = target.push();
+		
+		e->transform->setLocalScale(vec2{ 148,148 });
+		e->transform->setGlobalPosition(vec2{x,y});
+
+		
 
 
 		/*e->rigidbody->addSpin(rand01()*12-6);*/

@@ -1,8 +1,12 @@
 #pragma once
 
+#include <iostream>
 #include "sfwdraw.h"
 #include "BaseState.h"
 #include "Factory.h"
+#include "Target.h"
+
+using namespace std;
 
 
 
@@ -20,7 +24,7 @@
 class GameState : public BaseState
 {
 	Factory factory;
-	unsigned spr_space, spr_ship, spr_bullet, spr_roid, spr_font;
+	unsigned spr_space, spr_ship, spr_bullet, spr_roid, spr_font, spr_target, damaged;
 	ObjectPool<Entity>::iterator currentCamera;
 
 public:
@@ -31,6 +35,9 @@ public:
 		spr_ship = sfw::loadTextureMap("../res/bman.gif");
 		spr_roid = sfw::loadTextureMap("../res/boid.png");
 		spr_font = sfw::loadTextureMap("../res/font.png",32,4);
+		spr_target = sfw::loadTextureMap("../res/healthy.png");
+		damaged = sfw::loadTextureMap("../res/captain.png");
+
 	}
 
 	virtual void play()
@@ -43,9 +50,17 @@ public:
 		currentCamera->transform->setGlobalPosition(vec2{ 400, 300 });
 
 		// call some spawning functions!
-		factory.spawnStaticImage(spr_space, 0, 0, 800, 600);
+		factory.spawnStaticImage(spr_space, 0, 0, 1900, 1000);
 
 		factory.spawnPlayer(spr_ship, spr_font);
+
+		factory.spawnTarget(spr_target, 50, 300);
+		factory.spawnTarget(spr_target, 450, 300);
+		factory.spawnTarget(spr_target, 850, 300);
+		factory.spawnTarget(spr_target, 250, 600);
+		factory.spawnTarget(spr_target, 650, 600);
+		factory.spawnTarget(spr_target, 1050, 600);
+
 		factory.spawnAsteroid(spr_roid);
 		factory.spawnAsteroid(spr_roid);
 		factory.spawnAsteroid(spr_roid);
@@ -79,6 +94,8 @@ public:
 		factory.spawnAsteroid(spr_roid);
 		factory.spawnAsteroid(spr_roid);
 		factory.spawnAsteroid(spr_roid);
+
+		
 		
 	}
 
@@ -96,6 +113,16 @@ public:
 	virtual void step()
 	{
 		float dt = sfw::getDeltaTime();
+
+
+
+		/*int countEnemies = 0;
+		for each(auto it in factory)
+		{
+			if (it.target)
+				countEnemies++;
+		}
+*/
 
 		// maybe spawn some asteroids here.
 
@@ -117,6 +144,10 @@ public:
 					factory.spawnBullet(spr_bullet, e.transform->getGlobalPosition()  + e.transform->getGlobalUp()*48,
 											vec2{ 32,32 }, e.transform->getGlobalAngle(), 200, 1);
 				}
+				if (e.controller->hp >= 0)
+				{
+					cout << "ding" << endl;
+				}
 			}
 			// lifetime decay update
 			if (e.lifetime)
@@ -130,11 +161,23 @@ public:
 			if (e.gravwell && e.transform)
 			{
 				for (auto bit = factory.begin(); bit != factory.end(); bit++)
-					if(it != bit && bit->rigidbody && bit->transform && !bit->controller)
+					if(it != bit && bit->rigidbody && bit->transform && !bit->controller && !bit->target)
 					{
 						e.gravwell->attract(&e.transform, &bit->transform, &bit->rigidbody);
 					}
 			}
+
+			if (e.target && e.sprite)
+			{
+				
+				e.target->update(&e.sprite, damaged);
+				if (e.target->hp <= 0)
+				{
+					del = true;
+				}
+			}
+			
+			
 
 			// ++ here, because free increments in case of deletions
 			if (!del) it++;
@@ -156,13 +199,13 @@ public:
 					if (base::BoundsTest(&it->transform, &it->collider, &bit->transform, &bit->collider))
 					{
 						// if true, get the penetration and normal from the convex hulls
-						auto cd = base::ColliderTest(&it->transform, &it->collider, &bit->transform, &bit->collider);
+						base::collision cd = base::ColliderTest(&it->transform, &it->collider, &bit->transform, &bit->collider);
 						
 						// if there was a collision,
 						if (cd.result())
 						{							
 							// condition for dynamic resolution
-							/*else*/ if (it->rigidbody && bit->rigidbody && !bit->controller && !it->controller)
+							/*else*/ if (it->rigidbody && bit->rigidbody && !bit->controller && !it->controller && !bit->target && !it->target)
 								base::DynamicResolution(cd,&it->transform,&it->rigidbody, &bit->transform, &bit->rigidbody);
 							
 							//else if (bit->rigidbody && it->rigidbody && !it->controller)
@@ -173,6 +216,21 @@ public:
 								base::StaticResolution(cd, &it->transform, &it->rigidbody);
 							else if (it->controller && bit->rigidbody)
 								base::StaticResolution(cd, &bit->transform, &bit->rigidbody);
+							
+							else if (it->rigidbody && bit->target)
+							{
+								bit->target->hp -= cd.penetration * 10;
+								base::StaticResolution(cd, &it->transform, &it->rigidbody);
+								
+							}
+							else if (it->target && bit->rigidbody)
+							{
+								it->target->hp -= cd.penetration * 10;
+								base::StaticResolution(cd, &bit->transform, &bit->rigidbody);
+								
+							}
+							
+							
 							// condition for static resolution
 							else if (it->rigidbody && !bit->rigidbody)							
 								base::StaticResolution(cd, &it->transform, &it->rigidbody);			

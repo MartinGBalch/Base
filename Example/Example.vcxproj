@@ -131,8 +131,10 @@
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Factory.h" />
     <ClInclude Include="GameState.h" />
+    <ClInclude Include="GameTimer.h" />
     <ClInclude Include="GravityWell.h" />
     <ClInclude Include="PlayerController.h" />
+    <ClInclude Include="Target.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
