@@ -17,6 +17,7 @@ class Factory
 	ObjectPool<PlayerController> controllers;
 	ObjectPool<GravityWell> gravwells;
 	ObjectPool<Target> target;
+	ObjectPool<GameTimer> time;
 
 public:
 
@@ -28,7 +29,7 @@ public:
 	Factory(size_t size = 512)
 		: entities(size), transforms(size), rigidbodies(size),
 		colliders(size), sprites(size), lifetimes(size),
-		cameras(size), controllers(size), texts(size), gravwells(size), target(size)
+		cameras(size), controllers(size), texts(size), gravwells(size), target(size), time(size)
 	{
 	}
 
@@ -111,6 +112,18 @@ public:
 		return e;
 	}
 
+	ObjectPool<Entity>::iterator spawnTimer(unsigned font)
+	{
+		auto e = entities.push();
+		e->time = time.push();
+		e->transform = transforms.push();
+		e->text = texts.push();
+		e->text->sprite_id = font;
+		e->transform->setLocalScale(vec2{ 100, 150 });
+		e->transform->setLocalPosition(vec2{ 950, 500 });
+
+		return e;
+	}
 
 	ObjectPool<Entity>::iterator spawnAsteroid(unsigned sprite)
 	{

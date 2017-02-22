@@ -5,6 +5,7 @@
 #include "PlayerController.h"
 #include "GravityWell.h"
 #include "Target.h"
+#include "GameTimer.h"
 
 using namespace base;
 
@@ -24,6 +25,7 @@ public:
 	ObjectPool<PlayerController>::iterator controller;
 	ObjectPool<GravityWell>::iterator gravwell;
 	ObjectPool<Target>::iterator target;
+	ObjectPool<GameTimer>::iterator time;
 
 	void onFree()
 	{
@@ -38,5 +40,6 @@ public:
 		controller.free();
 		gravwell.free();
 		target.free();
+		time.free();
 	}
 };

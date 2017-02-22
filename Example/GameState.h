@@ -50,6 +50,7 @@ public:
 		currentCamera->transform->setGlobalPosition(vec2{ 400, 300 });
 
 		// call some spawning functions!
+		factory.spawnTimer(spr_font);
 		factory.spawnStaticImage(spr_space, 0, 0, 1900, 1000);
 
 		factory.spawnPlayer(spr_ship, spr_font);
@@ -175,6 +176,11 @@ public:
 				{
 					del = true;
 				}
+			}
+
+			if (e.time && e.text)
+			{
+				e.time->update(*e.text, dt);
 			}
 			
 			
