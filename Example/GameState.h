@@ -24,6 +24,7 @@ using namespace std;
 class GameState : public BaseState
 {
 	Factory factory;
+	GameTimer timer;
 	unsigned spr_space, spr_ship, spr_bullet, spr_roid, spr_font, spr_target, damaged;
 	ObjectPool<Entity>::iterator currentCamera;
 
@@ -37,7 +38,7 @@ public:
 		spr_font = sfw::loadTextureMap("../res/font.png",32,4);
 		spr_target = sfw::loadTextureMap("../res/healthy.png");
 		damaged = sfw::loadTextureMap("../res/captain.png");
-
+		
 	}
 
 	virtual void play()
@@ -50,7 +51,7 @@ public:
 		currentCamera->transform->setGlobalPosition(vec2{ 400, 300 });
 
 		// call some spawning functions!
-		factory.spawnTimer(spr_font);
+		
 		factory.spawnStaticImage(spr_space, 0, 0, 1900, 1000);
 
 		factory.spawnPlayer(spr_ship, spr_font);
@@ -107,7 +108,15 @@ public:
 
 	// should return what state we're going to.
 	// REMEMBER TO HAVE ENTRY AND STAY states for each application state!
-	virtual size_t next() const { return 0; }
+	virtual size_t next() const
+	{
+		if (timer.Trgt <= 0)
+		{
+			return (size_t)ENTER_WIN;
+		}
+
+		else return PLAY;
+	}
 
 
 	// update loop, where 'systems' exist
@@ -145,10 +154,7 @@ public:
 					factory.spawnBullet(spr_bullet, e.transform->getGlobalPosition()  + e.transform->getGlobalUp()*48,
 											vec2{ 32,32 }, e.transform->getGlobalAngle(), 200, 1);
 				}
-				if (e.controller->hp >= 0)
-				{
-					cout << "ding" << endl;
-				}
+				
 			}
 			// lifetime decay update
 			if (e.lifetime)
@@ -175,6 +181,13 @@ public:
 				if (e.target->hp <= 0)
 				{
 					del = true;
+					//e.target->amount -= 1;
+					timer.Trgt -= 1;
+					printf("%d", timer.Trgt);
+				}
+				if (e.target->amount <= 0)
+				{
+					cout << "ding" << endl;
 				}
 			}
 

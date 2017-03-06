@@ -10,6 +10,8 @@ class Target
 public:
 	int hp = 45000;
 	
+	int amount = 6;
+
 	bool isAlive = true;
 	unsigned healthy, damaged, dead;
 

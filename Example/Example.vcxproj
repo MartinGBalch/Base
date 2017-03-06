@@ -129,12 +129,16 @@
     <ClInclude Include="Boid.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="Exit.h" />
     <ClInclude Include="Factory.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="GameTimer.h" />
     <ClInclude Include="GravityWell.h" />
     <ClInclude Include="PlayerController.h" />
+    <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="Start.h" />
     <ClInclude Include="Target.h" />
+    <ClInclude Include="Win.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

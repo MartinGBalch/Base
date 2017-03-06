@@ -77,7 +77,7 @@ public:
 		e->sprite->sprite_id = sprite;
 		e->sprite->dimensions = vec2{1.2f, 1.2f};
 
-		e->rigidbody->addImpulse(e->transform->getGlobalUp() * impulse);
+		e->rigidbody->addImpulse(e->transform->getGlobalUp() * 300);
 
 		e->lifetime->lifespan = 5.f;
 
@@ -108,19 +108,6 @@ public:
 		e->transform->setGlobalPosition(vec2{ 540, -264 });
 
 		e->sprite->sprite_id = sprite;
-
-		return e;
-	}
-
-	ObjectPool<Entity>::iterator spawnTimer(unsigned font)
-	{
-		auto e = entities.push();
-		e->time = time.push();
-		e->transform = transforms.push();
-		e->text = texts.push();
-		e->text->sprite_id = font;
-		e->transform->setLocalScale(vec2{ 100, 150 });
-		e->transform->setLocalPosition(vec2{ 950, 500 });
 
 		return e;
 	}
